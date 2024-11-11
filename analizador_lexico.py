@@ -90,7 +90,7 @@ tokens = (
     "MODULE",
     "VARIABLE",
     "NUMERAL",
-    "FLOAT",
+    "NDOUBLE",
     "TEXT",
     "EQUALS",
     "NOT_EQUALS",
@@ -163,7 +163,7 @@ def t_TEXT(t):
     return t
 
 
-def t_FLOAT(t):
+def t_NDOUBLE(t):
     # r"[1-9]*[0-9]+\.[0-9]+" Double genérico
     # r"(?<!\d)(?:(?:0?\.\d+)|(?:[1-9]\d*\.\d+))(?!\d)"  # Incluye .3
     r"(?<!\d)(?:0?\.\d+|[1-9]\d*\.\d+)(?:[eE][+-]?\d+)?(?!\d)"  # Incluye notación científica y .3
