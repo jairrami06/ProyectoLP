@@ -1,6 +1,6 @@
 import ply.lex as lex
 
-# reserved words - Jair Ramírez
+# Aporte de Jair Ramírez
 
 reserved = {
     "abstract": "ABSTRACT",
@@ -66,9 +66,16 @@ reserved = {
     "while": "WHILE",
     "with": "WITH",
     "yield": "YIELD",
+    "int": "INT",
+    "double": "DOUBLE",
+    "bool": "BOOL",
+    "String": "STRING",
+    "List": "LIST",
+    "Map": "MAP",
+    "Object": "OBJECT",
+    "num": "NUM",
+    "main": "MAIN",
 }
-
-# List of token names - Jair Ramírez
 
 tokens = (
     "NUMBER",
@@ -78,11 +85,13 @@ tokens = (
     "DIVIDE",
     "LPAREN",
     "RPAREN",
+    "LBRACKET",
+    "RBRACKET",
     "MODULE",
     "VARIABLE",
     "NUMERAL",
     "FLOAT",
-    "STRING",
+    "TEXT",
     "EQUALS",
     "NOT_EQUALS",
     "GREATER",
@@ -103,15 +112,17 @@ tokens = (
     "DOUBLE_COLON",
 ) + tuple(reserved.values())
 
-# Regular expression rules for simple tokens -
+# Fin aporte de Jair Ramírez
+
 # Aporte de Tomás Steven Bolaños Fajardo
-# number, variable, numeral, float, string no están incluidos porque irían mejor en la seccion de abajo
 t_PLUS = r"\+"
 t_MINUS = r"-"
 t_TIMES = r"\*"
 t_DIVIDE = r"/"
 t_LPAREN = r"\("
 t_RPAREN = r"\)"
+t_LBRACKET = r"{"
+t_RBRACKET = r"}"
 t_MODULE = r"%"
 t_EQUALS = r"=="
 t_NOT_EQUALS = r"!="
@@ -146,7 +157,7 @@ def t_COMMENT_MULTI(t):
     pass  # Ignorar comentarios de varias líneas
 
 
-def t_STRING(t):
+def t_TEXT(t):
     # r'(["\'])(?:(?=(\\?))\2.)*?\1' Strings más complejos (anidados y saltos de linea con \n)
     r'"[^"\n]*"|\'[^\n]*\' '
     return t
@@ -182,27 +193,43 @@ def t_newline(t):
 
 t_ignore = " \t"
 
-
-# Error handling rule
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
 
-# Build the lexer
 lexer = lex.lex()
 
-# Test it out
-data = """
-pegar el algoritmo .dart
+# Aporte de Jair Ramírez
+
+def analizar_tokens(data):
+    lexer.input(data)
+    tokens = []
+
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        tokens.append(tok)
+        print(tok)  
+
+    return tokens
+
+algoritmoJair = """
+int factorial(int n) {
+  if (n <= 1) {
+    return 1;
+  } else {
+    return n * factorial(n - 1);
+  }
+}
+
+void main() {
+  int number = 5;
+  print("El factorial de $number es: ${factorial(number)}");
+}
 """
 
-# Give the lexer some input
-lexer.input(data)
+resultado = analizar_tokens(algoritmoJair)
 
-# Tokenize
-while True:
-    tok = lexer.token()
-    if not tok:
-        break
-    print(tok)
+# Fin aporte de Jair Ramírez
