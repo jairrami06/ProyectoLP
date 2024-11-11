@@ -142,3 +142,18 @@ def t_error(t):
 
 # Build the lexer
 lexer = lex.lex()
+
+# Test it out
+data = '''
+pegar el algoritmo .dart
+'''
+
+# Give the lexer some input
+lexer.input(data)
+
+# Tokenize
+while True:
+    tok = lexer.token()
+    if not tok:
+        break
+    print(tok)
