@@ -103,7 +103,35 @@ tokens = (
     'DOUBLE_COLON',
 ) + tuple(reserved.values())
 
-# Regular expression rules for simple tokens - 
+# Regular expression rules for simple tokens -
+#Aporte de Tomás Steven Bolaños Fajardo
+# number, variable, numeral, float, string no están incluidos porque irían mejor en la seccion de abajo
+t_PLUS           = r'\+'
+t_MINUS          = r'-'
+t_TIMES          = r'\*'
+t_DIVIDE         = r'/'
+t_LPAREN         = r'\('
+t_RPAREN         = r'\)'
+t_MODULE         = r'%'
+t_EQUALS         = r'=='
+t_NOT_EQUALS     = r'!='
+t_GREATER        = r'>'
+t_LESS           = r'<'
+t_GREATER_EQUAL  = r'>='
+t_LESS_EQUAL     = r'<='
+t_AND            = r'&&'
+t_OR             = r'\|\|'
+t_NOT            = r'!'
+t_ASSIGN         = r'='
+t_INCREMENT      = r'\+\+'
+t_DECREMENT      = r'--'
+t_DOT            = r'\.'
+t_COMMA          = r','
+t_COLON          = r':'
+t_SEMICOLON      = r';'
+t_QUESTION       = r'\?'
+t_DOUBLE_COLON   = r'::'
+# Fin Aporte Tomas Steven Bolaños Fajardo
 
 # A regular expression rule with some action code - 
 
