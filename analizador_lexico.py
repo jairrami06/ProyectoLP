@@ -144,9 +144,8 @@ t_QUESTION = r"\?"
 t_DOUBLE_COLON = r"::"
 # Fin Aporte Tomas Steven Bolaños Fajardo
 
-# A regular expression rule with some action code - Victor Valverde
 
-
+# Aporte por Victor Valverde
 def t_COMMENT_SINGLE(t):
     r"//.*"
     pass  # Ignorar comentarios de una sola línea
@@ -193,14 +192,18 @@ def t_newline(t):
 
 t_ignore = " \t"
 
+
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
 
+# Fin aporte por Víctor Valverde
+
 lexer = lex.lex()
 
 # Aporte de Jair Ramírez
+
 
 def analizar_tokens(data):
     lexer.input(data)
@@ -211,9 +214,10 @@ def analizar_tokens(data):
         if not tok:
             break
         tokens.append(tok)
-        print(tok)  
+        print(tok)
 
     return tokens
+
 
 algoritmoJair = """
 int factorial(int n) {
@@ -235,7 +239,7 @@ resultado = analizar_tokens(algoritmoJair)
 
 # Fin aporte de Jair Ramírez
 
-algoritmotbolanos="""
+algoritmotbolanos = """
 int fibonacci(int n) {
   if (n <= 1) return n;
   return fibonacci(n - 1) + fibonacci(n - 2);
@@ -249,3 +253,32 @@ void main() {
 """
 
 resultado = analizar_tokens(algoritmotbolanos)
+
+
+# Test por Víctor Valverde
+algoritmo_valverde = """
+void main() {
+  // Definimos el número de Avogadro
+  const double numeroDeAvogadro = 6.02214076e23;
+
+  // Función para convertir moles a moléculas
+  double molesAMoleculas(double moles) {
+    return moles * numeroDeAvogadro;
+  }
+
+  // Función para convertir moléculas a moles
+  double moleculasAMoles(double moleculas) {
+    return moleculas / numeroDeAvogadro;
+  }
+
+  double moles = 2.0;
+  double moleculas = molesAMoleculas(moles);
+  print('$moles moles es igual a $moleculas moléculas.');
+
+  moleculas = 1.20442815e24;
+  moles = moleculasAMoles(moleculas);
+  print('$moleculas moléculas es igual a $moles moles.');
+}
+"""
+
+resultado = analizar_tokens(algoritmo_valverde)
