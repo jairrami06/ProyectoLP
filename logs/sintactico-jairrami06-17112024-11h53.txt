@@ -1,0 +1,119 @@
+WARNING: Token 'ABSTRACT' defined, but not used
+WARNING: Token 'AS' defined, but not used
+WARNING: Token 'ASSERT' defined, but not used
+WARNING: Token 'ASYNC' defined, but not used
+WARNING: Token 'AWAIT' defined, but not used
+WARNING: Token 'BREAK' defined, but not used
+WARNING: Token 'CASE' defined, but not used
+WARNING: Token 'CATCH' defined, but not used
+WARNING: Token 'CLASS' defined, but not used
+WARNING: Token 'COLON' defined, but not used
+WARNING: Token 'CONST' defined, but not used
+WARNING: Token 'CONTINUE' defined, but not used
+WARNING: Token 'COVARIANT' defined, but not used
+WARNING: Token 'DECREMENT' defined, but not used
+WARNING: Token 'DEFAULT' defined, but not used
+WARNING: Token 'DEFERRED' defined, but not used
+WARNING: Token 'DO' defined, but not used
+WARNING: Token 'DOLLARSIGN' defined, but not used
+WARNING: Token 'DOT' defined, but not used
+WARNING: Token 'DOUBLE_COLON' defined, but not used
+WARNING: Token 'ENUM' defined, but not used
+WARNING: Token 'EXPORT' defined, but not used
+WARNING: Token 'EXTENDS' defined, but not used
+WARNING: Token 'EXTENSION' defined, but not used
+WARNING: Token 'EXTERNAL' defined, but not used
+WARNING: Token 'FACTORY' defined, but not used
+WARNING: Token 'FINAL' defined, but not used
+WARNING: Token 'FINALLY' defined, but not used
+WARNING: Token 'FOR' defined, but not used
+WARNING: Token 'FUNCTION' defined, but not used
+WARNING: Token 'GET' defined, but not used
+WARNING: Token 'HIDE' defined, but not used
+WARNING: Token 'IMPLEMENTS' defined, but not used
+WARNING: Token 'IMPORT' defined, but not used
+WARNING: Token 'IN' defined, but not used
+WARNING: Token 'INCREMENT' defined, but not used
+WARNING: Token 'INTERFACE' defined, but not used
+WARNING: Token 'IS' defined, but not used
+WARNING: Token 'LATE' defined, but not used
+WARNING: Token 'LIBRARY' defined, but not used
+WARNING: Token 'MAP' defined, but not used
+WARNING: Token 'MIXIN' defined, but not used
+WARNING: Token 'MODULE' defined, but not used
+WARNING: Token 'NEW' defined, but not used
+WARNING: Token 'NOT_EQUALS' defined, but not used
+WARNING: Token 'NULL' defined, but not used
+WARNING: Token 'NUM' defined, but not used
+WARNING: Token 'NUMERAL' defined, but not used
+WARNING: Token 'OBJECT' defined, but not used
+WARNING: Token 'ON' defined, but not used
+WARNING: Token 'OPERATOR' defined, but not used
+WARNING: Token 'PART' defined, but not used
+WARNING: Token 'QUESTION' defined, but not used
+WARNING: Token 'RETHROW' defined, but not used
+WARNING: Token 'RETURN' defined, but not used
+WARNING: Token 'SET' defined, but not used
+WARNING: Token 'SHOW' defined, but not used
+WARNING: Token 'SUPER' defined, but not used
+WARNING: Token 'SWITCH' defined, but not used
+WARNING: Token 'SYNC' defined, but not used
+WARNING: Token 'THIS' defined, but not used
+WARNING: Token 'THROW' defined, but not used
+WARNING: Token 'TRY' defined, but not used
+WARNING: Token 'TYPEDEF' defined, but not used
+WARNING: Token 'WHILE' defined, but not used
+WARNING: Token 'WITH' defined, but not used
+WARNING: Token 'YIELD' defined, but not used
+WARNING: There are 67 unused tokens
+Generating LALR tables
+WARNING: 19 shift/reduce conflicts
+Parsing input:
+ print(42);
+Parsing result: None
+Parsing input:
+ print('Hello, World!');
+Parsing result: None
+Parsing input:
+ print(5 + 3);
+Parsing result: None
+Parsing input:
+
+if (x > 10) {
+    print(42);
+} else {
+    print(0);
+}
+
+Parsing result: None
+Parsing input:
+
+if (a == b) {
+    print('Equal');
+}
+
+Parsing result: None
+Parsing input:
+
+void myFunction(int x, int y) {
+    print(x);
+}
+
+Parsing result: None
+Parsing input:
+
+void greet(int name) {
+    print('Hello ' + name);
+}
+
+Parsing result: None
+Parsing input:
+
+List<int> numbers = [1, 2, 3, 4];
+
+Parsing result: None
+Parsing input:
+
+List<String> names = ['Alice', 'Bob', 'Charlie'];
+
+Parsing result: None
