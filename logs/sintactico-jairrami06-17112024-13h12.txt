@@ -1,0 +1,55 @@
+Parsing input:
+ print(42);
+Parsing result: None
+Parsing input:
+ print('Hello, World!');
+Parsing result: None
+Parsing input:
+ print(5 + 3);
+Parsing result: None
+Parsing input:
+
+int a = 5;
+int b = 3;
+int suma = a + b;
+int resta = a - b;
+int multiplicacion = a * b;
+double division = a / b;
+print("Suma: \$suma");
+print("Resta: \$resta");
+print("Multiplicación: \$multiplicacion");
+print("División: \$division");
+
+Parsing result: None
+Parsing input:
+
+int edad = 20;
+String pais = "México";
+if (edad > 18 && pais == "México") {
+    print("Eres mayor de edad en México.");
+} else if (edad > 18 || pais != "México") {
+    print("Eres mayor de edad, pero no en México.");
+} else {
+    print("Eres menor de edad.");
+}
+
+Parsing result: None
+Parsing input:
+
+int entero = 42;
+double decimal = 3.14;
+String texto = "Hola Dart";
+bool esVerdadero = true;
+int suma = entero + 10;
+bool condicion = entero > 10 && esVerdadero;
+print("Entero: \$entero");
+print("Decimal: \$decimal");
+print("Texto: \$texto");
+print("Condición: \$condicion");
+
+Parsing result: None
+Parsing input:
+
+List<int> numeros = [1, 2, 3, 4, 5];
+
+Parsing result: None

@@ -22,10 +22,7 @@ def p_statement(p):
 def p_variable_definition(p):
     '''variable_definition : type ID ASSIGN expression SEMICOLON
                            | DYNAMIC ID ASSIGN expression SEMICOLON
-                           | VAR ID ASSIGN expression SEMICOLON
-                           | STATIC type ID ASSIGN expression SEMICOLON
-                           | STATIC VAR ID ASSIGN expression SEMICOLON
-                           | STATIC DYNAMIC ID ASSIGN expression SEMICOLON'''
+                           | VAR ID ASSIGN expression SEMICOLON'''
 
 # Print
 def p_print(p):
@@ -40,6 +37,13 @@ def p_expression_arithmetic(p):
                   | expression TIMES expression
                   | expression DIVIDE expression'''
 
+def p_expression_logic(p):
+    '''expression : expression AND expression
+                  | expression OR expression'''
+
+def p_expression_comparison(p):
+    '''expression : value comparator value'''
+
 def p_expression_concat(p):
     '''expression : value PLUS value'''
 
@@ -49,29 +53,37 @@ def p_expression_value(p):
 # Condicionales
 def p_control_structures(p):
     '''control_structures : if_block
+                          | if_block else_if_blocks
+                          | if_block else_if_blocks else_block
                           | if_block else_block'''
 
 def p_if_block(p):
     '''if_block : IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET'''
+
+def p_else_if_blocks(p):
+    '''else_if_blocks : ELSE IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET
+                      | else_if_blocks ELSE IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET'''
 
 def p_else_block(p):
     '''else_block : ELSE LBRACKET statement_list RBRACKET'''
 
 def p_conditions(p):
     '''conditions : condition
-                  | conditions AND condition
-                  | conditions OR condition'''
+                  | conditions AND conditions
+                  | conditions OR conditions'''
 
 def p_condition(p):
     '''condition : value comparator value
-                 | NOT value'''
+                 | NOT condition
+                 | LPAREN conditions RPAREN'''
 
 def p_comparator(p):
     '''comparator : GREATER
                   | LESS
                   | EQUALS
                   | GREATER_EQUAL
-                  | LESS_EQUAL'''
+                  | LESS_EQUAL
+                  | NOT_EQUALS'''
 
 # Funciones
 def p_function(p):
@@ -110,20 +122,26 @@ def p_value(p):
     '''value : NUMBER
              | NDOUBLE
              | TEXT
-             | ID'''
+             | ID
+             | interpolated_string'''
 
 def p_value_bool(p):
     '''value : TRUE
              | FALSE'''
 
+def p_interpolated_string(p):
+    '''interpolated_string : TEXT PLUS ID
+                           | TEXT PLUS expression'''
+
+#Fin aporte Jair Ramírez
+
 # Manejo de errores
 def p_error(p):
-    print("Syntax error in line '%d'" % p.lineno)
-
-# Fin aporte Jair Ramírez
+    print("Syntax error in line '%d'" % (p.lineno if p else "unknown"))
 
 # Inicializar el parser
 parser = yacc.yacc()
+
 
 # Función para ejecutar las pruebas
 def test_parser(input_code):
@@ -139,46 +157,43 @@ test_parser("print('Hello, World!');")
 test_parser("print(5 + 3);")
 
 test_parser("""
-if (x > 10) {
-    print(42);
+int a = 5;
+int b = 3;
+int suma = a + b;
+int resta = a - b;
+int multiplicacion = a * b;
+double division = a / b;
+print("Suma: \$suma");
+print("Resta: \$resta");
+print("Multiplicación: \$multiplicacion");
+print("División: \$division");
+""")
+
+test_parser("""
+int edad = 20;
+String pais = "México";
+if (edad > 18 && pais == "México") {
+    print("Eres mayor de edad en México.");
+} else if (edad > 18 || pais != "México") {
+    print("Eres mayor de edad, pero no en México.");
 } else {
-    print(0);
-}
-""")
-test_parser("""
-if (a == b) {
-    print('Equal');
+    print("Eres menor de edad.");
 }
 """)
 
 test_parser("""
-void myFunction(int x, int y) {
-    print(x);
-}
+int entero = 42;
+double decimal = 3.14;
+String texto = "Hola Dart";
+bool esVerdadero = true;
+int suma = entero + 10;
+bool condicion = entero > 10 && esVerdadero;
+print("Entero: \$entero");
+print("Decimal: \$decimal");
+print("Texto: \$texto");
+print("Condición: \$condicion");
 """)
 
 test_parser("""
-void greet(int name) {
-    print('Hello ' + name);
-}
+List<int> numeros = [1, 2, 3, 4, 5];
 """)
-
-test_parser("""
-List<int> numbers = [1, 2, 3, 4];
-""")
-
-test_parser("""
-List<String> names = ['Alice', 'Bob', 'Charlie'];
-""")
-
-'''
-while True:
-    try:
-        s = input('dart > ')
-    except EOFError:
-        break
-    if not s: continue
-    result = parser.parse(s)
-    print(result)
-    '''
-
