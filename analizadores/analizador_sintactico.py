@@ -12,6 +12,10 @@ def p_statement_list(p):
 
 def p_statement(p):
     '''statement : print
+                 | data_input
+                 | set
+                 | for
+                 | constructor
                  | control_structures
                  | function
                  | list_definition
@@ -135,9 +139,95 @@ def p_interpolated_string(p):
 
 #Fin aporte Jair Ramírez
 
+
+#Inicio aporte Tomas Bolaños
+#Entrada de Datos
+#Ejemplo String? input= stdin.readLineSync();
+def  p_data_input(p):
+    '''
+    data_input : STRING QUESTION ID ASSIGN STDIN DOT READLINESYNC LPAREN RPAREN SEMICOLON
+    '''
+
+#Estructura de Datos: Set
+#Ejemplos var halogens = {'fluorine', 'chlorine', 'bromine', 'iodine', 'astatine'};
+#var names = <String>{};
+#final constantSet = const {'fluorine','chlorine','bromine','iodine','astatine'};
+def p_set(p):
+    '''
+    set : VAR ID ASSIGN LBRACKET value_list RBRACKET SEMICOLON
+        | VAR ID ASSIGN LESS STRING GREATER LBRACKET RBRACKET SEMICOLON
+        | FINAL ID ASSIGN CONST LBRACKET value_list RBRACKET SEMICOLON
+    '''
+
+#Estructura de Control for
+#Ejemplos for (int i = 0; i < value; i++) { something }
+#for (final candidate in candidates) { something }
+#for (final Candidate(:atributo, :atributo) in candidates) { something}
+
+def p_for_inicio(p):
+    '''
+    for_inicio : INT ID ASSIGN NUMBER
+    | DOUBLE ID ASSIGN NDOUBLE
+    '''
+
+def p_for_conditions(p):
+    '''
+    for_conditions : conditions
+    '''
+
+def p_for_changes(p):
+    '''
+    for_changes : ID comparator value
+        | ID INCREMENT
+        | ID DECREMENT
+        | ID comparator value COMMA for_changes
+    '''
+
+def p_foreach_id_parenthesis_content(p):
+    '''
+    foreach_id_parenthesis_content : COLON ID
+    | COLON ID COMMA foreach_id_parenthesis_content
+    '''
+
+def p_for_parenthesis_content(p):
+    '''
+    for_parenthesis_content : for_inicio SEMICOLON for_conditions SEMICOLON for_changes
+    | FINAL ID IN ID
+    | FINAL ID LPAREN foreach_id_parenthesis_content RPAREN IN ID
+    '''
+
+def p_for(p):
+    '''
+    for : FOR LPAREN for_parenthesis_content RPAREN LBRACKET statement_list RBRACKET
+    '''
+
+#Funcion Constructor(muy difícil validar)
+#  Point(this.x, this.y);
+
+def p_constructor_parenthesis_content(p):
+    '''
+    constructor_parenthesis_content : THIS DOT ID
+    | THIS DOT ID COMMA constructor_parenthesis_content
+    '''
+
+def p_constructor(p):
+    '''
+    constructor : ID LPAREN constructor_parenthesis_content RPAREN SEMICOLON
+    '''
+
+
+#Fin aporte de Tomas
+
 # Manejo de errores
+#def p_error(p):
+#    print("Syntax error in line '%d'" % (p.lineno if p else "unknown"))
+
+#Manejo de errores mas detallados
 def p_error(p):
-    print("Syntax error in line '%d'" % (p.lineno if p else "unknown"))
+    if p:
+        print(f"Syntax error at token '{p.type}' (value: '{p.value}') on line {p.lineno}")
+    else:
+        print("Syntax error at EOF")
 
 # Inicializar el parser
 parser = yacc.yacc()
@@ -149,51 +239,13 @@ def test_parser(input_code):
     result = parser.parse(input_code)
     print("Parsing result:", result)
 
-
 # Pruebas
+test_parser('String input = stdin.readLineSync();')
+test_parser("var halogens = {'fluorine', 'chlorine', 'bromine', 'iodine', 'astatine'};")
+test_parser("var names = <String>{};")
+test_parser("final constantSet = const {'fluorine','chlorine','bromine','iodine','astatine'};")
+test_parser("for (int i = 0; i < 10; i++) { print(i); }")
+test_parser("for (final candidate in candidates) { print(candidate); }")
+test_parser("for (final Candidate(:atributo, :atributo) in candidates) { print('attributes'); }")
+test_parser("Point(this.x, this.y);")
 
-test_parser("print(42);")
-test_parser("print('Hello, World!');")
-test_parser("print(5 + 3);")
-
-test_parser("""
-int a = 5;
-int b = 3;
-int suma = a + b;
-int resta = a - b;
-int multiplicacion = a * b;
-double division = a / b;
-print("Suma: \$suma");
-print("Resta: \$resta");
-print("Multiplicación: \$multiplicacion");
-print("División: \$division");
-""")
-
-test_parser("""
-int edad = 20;
-String pais = "México";
-if (edad > 18 && pais == "México") {
-    print("Eres mayor de edad en México.");
-} else if (edad > 18 || pais != "México") {
-    print("Eres mayor de edad, pero no en México.");
-} else {
-    print("Eres menor de edad.");
-}
-""")
-
-test_parser("""
-int entero = 42;
-double decimal = 3.14;
-String texto = "Hola Dart";
-bool esVerdadero = true;
-int suma = entero + 10;
-bool condicion = entero > 10 && esVerdadero;
-print("Entero: \$entero");
-print("Decimal: \$decimal");
-print("Texto: \$texto");
-print("Condición: \$condicion");
-""")
-
-test_parser("""
-List<int> numeros = [1, 2, 3, 4, 5];
-""")

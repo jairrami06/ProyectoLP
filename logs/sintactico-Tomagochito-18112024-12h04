@@ -1,0 +1,28 @@
+C:\Users\TOMAS\AppData\Local\Programs\Python\Python313\python.exe "C:\Users\TOMAS\Desktop\ESPOL\SEMESTRES\5\Lenguajes de Programacion\Proyecto1P\ProyectoLP\analizadores\analizador_sintactico.py"
+Parsing input:
+ String input = stdin.readLineSync();
+Syntax error at token 'DOT' (value: '.') on line 3
+Parsing result: None
+Parsing input:
+ var halogens = {'fluorine', 'chlorine', 'bromine', 'iodine', 'astatine'};
+Parsing result: None
+Parsing input:
+ var names = <String>{};
+Parsing result: None
+Parsing input:
+ final constantSet = const {'fluorine','chlorine','bromine','iodine','astatine'};
+Parsing result: None
+Parsing input:
+ for (int i = 0; i < 10; i++) { print(i); }
+Parsing result: None
+Parsing input:
+ for (final candidate in candidates) { print(candidate); }
+Parsing result: None
+Parsing input:
+ for (final Candidate(:atributo, :atributo) in candidates) { print('attributes'); }
+Parsing result: None
+Parsing input:
+ Point(this.x, this.y);
+Parsing result: None
+
+Process finished with exit code 0
