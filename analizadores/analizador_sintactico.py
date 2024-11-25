@@ -1,6 +1,10 @@
 import ply.yacc as yacc
 from analizador_lexico import tokens
 
+symbol_table = {
+    "variables": {},
+    "functions": {}, 
+}
 # Inicio aporte Jair Ramírez
 # Estructura principal
 def p_program(p):
@@ -20,15 +24,66 @@ def p_statement(p):
                  | function
                  | list_definition
                  | variable_definition
+                 | variable_usage
+                 | call_function
                  | SEMICOLON'''
 
-# Definición de variables
+def p_variable_usage(p):
+    '''variable_usage : ID'''
+    variable_name = p[1]
+    if variable_name not in symbol_table["variables"]:
+        print(f"Semantic error: Variable '{variable_name}' not declared before usage.")
+    else:
+        p[0] = symbol_table["variables"][variable_name]
+
+def p_call_function(p):
+    '''call_function : ID LPAREN argument_list RPAREN
+                  | ID LPAREN RPAREN'''
+    function_name = p[1]
+    if function_name not in symbol_table["functions"]:
+        print(f"Semantic error: Function '{function_name}' not declared before usage.")
+    else:
+        expected_params = len(symbol_table["functions"][function_name])
+        actual_params = len(p[3]) if len(p) == 5 else 0
+        if expected_params != actual_params:
+            print(f"Semantic error: Function '{function_name}' expects {expected_params} parameters but {actual_params} were given.")
+
+def p_argument_list(p):
+    '''
+    argument_list : expression
+                  | argument_list COMMA expression
+    '''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]  
+
+def p_function(p):
+    '''
+    function : type ID LPAREN parameter_list RPAREN LBRACKET statement_list RBRACKET
+             | VOID ID LPAREN parameter_list RPAREN LBRACKET statement_list RBRACKET
+             | type ID LPAREN RPAREN LBRACKET statement_list RBRACKET
+             | VOID ID LPAREN RPAREN LBRACKET statement_list RBRACKET
+             | VOID ID LPAREN RPAREN LBRACKET RBRACKET
+             | VOID ID LPAREN parameter_list RPAREN LBRACKET RBRACKET
+    '''
+    function_name = p[2]
+    parameters = p[4] if len(p) == 9 else []
+    if function_name in symbol_table["functions"]:
+        print(f"Semantic error: Function '{function_name}' already declared.")
+    else:
+        symbol_table["functions"][function_name] = parameters
+
 def p_variable_definition(p):
     '''variable_definition : type ID ASSIGN expression SEMICOLON
-                           | DYNAMIC ID ASSIGN expression SEMICOLON
-                           | VAR ID ASSIGN expression SEMICOLON'''
+                        | DYNAMIC ID ASSIGN expression SEMICOLON
+                        | VAR ID ASSIGN expression SEMICOLON'''
+    variable_name = p[2]
+    if variable_name in symbol_table["variables"]:
+        print(f"Semantic error: Variable '{variable_name}' already declared.")
+    else:
+        symbol_table["variables"][variable_name] = p[4]
 
-# Print
 def p_print(p):
     '''print : PRINT LPAREN RPAREN SEMICOLON
              | PRINT LPAREN value RPAREN SEMICOLON
@@ -54,7 +109,6 @@ def p_expression_concat(p):
 def p_expression_value(p):
     '''expression : value'''
 
-# Condicionales
 def p_control_structures(p):
     '''control_structures : if_block
                           | if_block else_if_blocks
@@ -89,20 +143,18 @@ def p_comparator(p):
                   | LESS_EQUAL
                   | NOT_EQUALS'''
 
-# Funciones
-def p_function(p):
-    '''function : type ID LPAREN parameter_list RPAREN LBRACKET statement_list RBRACKET
-                | VOID ID LPAREN parameter_list RPAREN LBRACKET statement_list RBRACKET
-                | type ID LPAREN RPAREN LBRACKET statement_list RBRACKET
-                | VOID ID LPAREN RPAREN LBRACKET statement_list RBRACKET'''
-
 def p_parameter_list(p):
     '''parameter_list : parameter
-                      | parameter_list COMMA parameter'''
+                   | parameter_list COMMA parameter'''
+    if len(p) == 2:
+        p[0] = [p[1]]  
+    else:
+        p[0] = p[1] + [p[3]]  
 
 def p_parameter(p):
     '''parameter : type ID
-                 | REQUIRED type ID'''
+              | REQUIRED type ID'''
+    p[0] = p[2] if len(p) == 3 else p[3]  
 
 # Tipos de datos
 def p_type(p):
@@ -138,7 +190,6 @@ def p_interpolated_string(p):
                            | TEXT PLUS expression'''
 
 #Fin aporte Jair Ramírez
-
 
 #Inicio aporte Tomas Bolaños
 #Entrada de Datos
@@ -215,12 +266,7 @@ def p_constructor(p):
     constructor : ID LPAREN constructor_parenthesis_content RPAREN SEMICOLON
     '''
 
-
 #Fin aporte de Tomas
-
-# Manejo de errores
-#def p_error(p):
-#    print("Syntax error in line '%d'" % (p.lineno if p else "unknown"))
 
 #Manejo de errores mas detallados
 def p_error(p):
@@ -232,7 +278,6 @@ def p_error(p):
 # Inicializar el parser
 parser = yacc.yacc()
 
-
 # Función para ejecutar las pruebas
 def test_parser(input_code):
     print("Parsing input:\n", input_code)
@@ -240,12 +285,11 @@ def test_parser(input_code):
     print("Parsing result:", result)
 
 # Pruebas
-test_parser('String input = stdin.readLineSync();')
-test_parser("var halogens = {'fluorine', 'chlorine', 'bromine', 'iodine', 'astatine'};")
-test_parser("var names = <String>{};")
-test_parser("final constantSet = const {'fluorine','chlorine','bromine','iodine','astatine'};")
-test_parser("for (int i = 0; i < 10; i++) { print(i); }")
-test_parser("for (final candidate in candidates) { print(candidate); }")
-test_parser("for (final Candidate(:atributo, :atributo) in candidates) { print('attributes'); }")
-test_parser("Point(this.x, this.y);")
+test_parser('int x = 10;')  
+test_parser('x;')  
+test_parser('y;')  
 
+test_parser('void myFunction(int a, int b) {;}') 
+test_parser('myFunction(10, 20);')  
+test_parser('myFunction(10);')  
+test_parser('otherFunction(10);')  
