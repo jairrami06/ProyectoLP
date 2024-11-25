@@ -3,6 +3,8 @@ import ply.lex as lex
 # Aporte de Jair Ramírez
 
 reserved = {
+    "stdin": "STDIN",
+    "readLineSync": "READLINESYNC",
     "abstract": "ABSTRACT",
     "as": "AS",
     "assert": "ASSERT",
@@ -78,8 +80,6 @@ reserved = {
 }
 
 tokens = (
-    "STDIN",
-    "READLINESYNC",
     "NUMBER",
     "PLUS",
     "MINUS",
@@ -115,13 +115,12 @@ tokens = (
     "SEMICOLON",
     "QUESTION",
     "DOUBLE_COLON",
+    "LENGTH",
 ) + tuple(reserved.values())
 
 # Fin aporte de Jair Ramírez
 
 # Aporte de Tomás Steven Bolaños Fajardo
-t_STDIN= "stdin"
-t_READLINESYNC= "readLineSync"
 t_PLUS = r"\+"
 t_MINUS = r"-"
 t_TIMES = r"\*"
@@ -152,6 +151,7 @@ t_COLON = r":"
 t_SEMICOLON = r";"
 t_QUESTION = r"\?"
 t_DOUBLE_COLON = r"::"
+t_LENGTH = r"length"
 # Fin Aporte Tomas Steven Bolaños Fajardo
 
 

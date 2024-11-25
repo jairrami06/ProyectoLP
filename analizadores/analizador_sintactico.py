@@ -36,6 +36,7 @@ def p_variable_usage(p):
     else:
         p[0] = symbol_table["variables"][variable_name]
 
+
 def p_call_function(p):
     '''call_function : ID LPAREN argument_list RPAREN
                   | ID LPAREN RPAREN'''
@@ -48,6 +49,11 @@ def p_call_function(p):
         if expected_params != actual_params:
             print(f"Semantic error: Function '{function_name}' expects {expected_params} parameters but {actual_params} were given.")
 
+def  p_data_input(p):
+    '''
+    data_input : STRING ID ASSIGN STDIN DOT READLINESYNC LPAREN RPAREN SEMICOLON
+    '''
+    
 def p_argument_list(p):
     '''
     argument_list : expression
@@ -194,10 +200,7 @@ def p_interpolated_string(p):
 #Inicio aporte Tomas Bolaños
 #Entrada de Datos
 #Ejemplo String? input= stdin.readLineSync();
-def  p_data_input(p):
-    '''
-    data_input : STRING QUESTION ID ASSIGN STDIN DOT READLINESYNC LPAREN RPAREN SEMICOLON
-    '''
+
 
 #Estructura de Datos: Set
 #Ejemplos var halogens = {'fluorine', 'chlorine', 'bromine', 'iodine', 'astatine'};
@@ -285,6 +288,7 @@ def test_parser(input_code):
     print("Parsing result:", result)
 
 # Pruebas
+test_parser('String input = stdin.readLineSync();')
 test_parser('int x = 10;')  
 test_parser('x;')  
 test_parser('y;')  
