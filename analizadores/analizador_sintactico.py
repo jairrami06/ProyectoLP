@@ -1,21 +1,28 @@
 import ply.yacc as yacc
 from analizador_lexico import tokens
 
+# Inicio aporte Jair Ramírez
+
 symbol_table = {
     "variables": {},
     "functions": {}, 
 }
-# Inicio aporte Jair Ramírez
+
 # Estructura principal
 def p_program(p):
-    '''program : statement_list'''
+    '''
+    program : statement_list
+    '''
 
 def p_statement_list(p):
-    '''statement_list : statement
-                      | statement_list statement'''
+    '''
+    statement_list : statement
+                      | statement_list statement
+    '''
 
 def p_statement(p):
-    '''statement : print
+    '''
+    statement : print
                  | data_input
                  | set
                  | for
@@ -26,10 +33,13 @@ def p_statement(p):
                  | variable_definition
                  | variable_usage
                  | call_function
-                 | SEMICOLON'''
+                 | SEMICOLON
+    '''
 
 def p_variable_usage(p):
-    '''variable_usage : ID'''
+    '''
+    variable_usage : ID
+    '''
     variable_name = p[1]
     if variable_name not in symbol_table["variables"]:
         print(f"Semantic error: Variable '{variable_name}' not declared before usage.")
@@ -38,8 +48,10 @@ def p_variable_usage(p):
 
 
 def p_call_function(p):
-    '''call_function : ID LPAREN argument_list RPAREN
-                  | ID LPAREN RPAREN'''
+    '''
+    call_function : ID LPAREN argument_list RPAREN
+                  | ID LPAREN RPAREN
+    '''
     function_name = p[1]
     if function_name not in symbol_table["functions"]:
         print(f"Semantic error: Function '{function_name}' not declared before usage.")
@@ -54,6 +66,12 @@ def  p_data_input(p):
     data_input : STRING ID ASSIGN STDIN DOT READLINESYNC LPAREN RPAREN SEMICOLON
     '''
     
+def  p_length(p):
+    '''
+    length : call_list DOT LENGTH
+                | TEXT DOT LENGTH
+    '''
+
 def p_argument_list(p):
     '''
     argument_list : expression
@@ -81,9 +99,12 @@ def p_function(p):
         symbol_table["functions"][function_name] = parameters
 
 def p_variable_definition(p):
-    '''variable_definition : type ID ASSIGN expression SEMICOLON
+    '''
+    variable_definition : type ID ASSIGN expression SEMICOLON
                         | DYNAMIC ID ASSIGN expression SEMICOLON
-                        | VAR ID ASSIGN expression SEMICOLON'''
+                        | VAR ID ASSIGN expression SEMICOLON
+                        | INT ID ASSIGN length SEMICOLON
+    '''
     variable_name = p[2]
     if variable_name in symbol_table["variables"]:
         print(f"Semantic error: Variable '{variable_name}' already declared.")
@@ -91,121 +112,163 @@ def p_variable_definition(p):
         symbol_table["variables"][variable_name] = p[4]
 
 def p_print(p):
-    '''print : PRINT LPAREN RPAREN SEMICOLON
+    '''
+    print : PRINT LPAREN RPAREN SEMICOLON
              | PRINT LPAREN value RPAREN SEMICOLON
-             | PRINT LPAREN expression RPAREN SEMICOLON'''
+             | PRINT LPAREN expression RPAREN SEMICOLON
+             | PRINT LPAREN length RPAREN SEMICOLON
+    '''
 
 # Expresiones
 def p_expression_arithmetic(p):
-    '''expression : expression PLUS expression
+    '''
+    expression : expression PLUS expression
                   | expression MINUS expression
                   | expression TIMES expression
-                  | expression DIVIDE expression'''
+                  | expression DIVIDE expression
+    '''
 
 def p_expression_logic(p):
-    '''expression : expression AND expression
-                  | expression OR expression'''
+    '''
+    expression : expression AND expression
+                  | expression OR expression
+    '''
 
 def p_expression_comparison(p):
-    '''expression : value comparator value'''
+    '''
+    expression : value comparator value
+    '''
 
 def p_expression_concat(p):
-    '''expression : value PLUS value'''
+    '''
+    expression : value PLUS value
+    '''
 
 def p_expression_value(p):
-    '''expression : value'''
+    '''
+    expression : value
+    '''
 
 def p_control_structures(p):
-    '''control_structures : if_block
+    '''
+    control_structures : if_block
                           | if_block else_if_blocks
                           | if_block else_if_blocks else_block
-                          | if_block else_block'''
+                          | if_block else_block
+    '''
 
 def p_if_block(p):
-    '''if_block : IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET'''
+    '''
+    if_block : IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET
+    '''
 
 def p_else_if_blocks(p):
-    '''else_if_blocks : ELSE IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET
-                      | else_if_blocks ELSE IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET'''
+    '''
+    else_if_blocks : ELSE IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET
+                      | else_if_blocks ELSE IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET
+    '''
 
 def p_else_block(p):
-    '''else_block : ELSE LBRACKET statement_list RBRACKET'''
+    '''
+    else_block : ELSE LBRACKET statement_list RBRACKET
+    '''
 
 def p_conditions(p):
-    '''conditions : condition
+    '''
+    conditions : condition
                   | conditions AND conditions
-                  | conditions OR conditions'''
+                  | conditions OR conditions
+    '''
 
 def p_condition(p):
-    '''condition : value comparator value
+    '''
+    condition : value comparator value
                  | NOT condition
-                 | LPAREN conditions RPAREN'''
+                 | LPAREN conditions RPAREN
+    '''
 
 def p_comparator(p):
-    '''comparator : GREATER
+    '''
+    comparator : GREATER
                   | LESS
                   | EQUALS
                   | GREATER_EQUAL
                   | LESS_EQUAL
-                  | NOT_EQUALS'''
+                  | NOT_EQUALS
+    '''
 
 def p_parameter_list(p):
-    '''parameter_list : parameter
-                   | parameter_list COMMA parameter'''
+    '''
+    parameter_list : parameter
+                   | parameter_list COMMA parameter
+    '''
     if len(p) == 2:
         p[0] = [p[1]]  
     else:
         p[0] = p[1] + [p[3]]  
 
 def p_parameter(p):
-    '''parameter : type ID
-              | REQUIRED type ID'''
+    '''
+    parameter : type ID
+              | REQUIRED type ID
+    '''
     p[0] = p[2] if len(p) == 3 else p[3]  
 
 # Tipos de datos
 def p_type(p):
-    '''type : INT
+    '''
+    type : INT
             | DOUBLE
             | STRING
             | BOOL
-            | LIST'''
+            | LIST
+    '''
 
-# Listas
+# Lista
+def p_call_list(p):
+    '''
+    call_list : LSBRACKET value_list RSBRACKET
+    '''
+ 
 def p_list_definition(p):
-    '''list_definition : LIST LSBRACKET value_list RSBRACKET SEMICOLON
-                       | LIST LESS type GREATER ID ASSIGN LSBRACKET value_list RSBRACKET SEMICOLON'''
+    '''
+    list_definition : LIST LESS type GREATER ID ASSIGN LSBRACKET value_list RSBRACKET SEMICOLON
+    '''
 
 def p_value_list(p):
-    '''value_list : value
-                  | value_list COMMA value'''
+    '''
+    value_list : value
+                  | value_list COMMA value
+    '''
 
 # Valores
 def p_value(p):
-    '''value : NUMBER
+    '''
+    value : NUMBER
              | NDOUBLE
              | TEXT
              | ID
-             | interpolated_string'''
+             | interpolated_string
+    '''
 
 def p_value_bool(p):
-    '''value : TRUE
-             | FALSE'''
+    '''
+    value : TRUE
+             | FALSE
+    '''
 
 def p_interpolated_string(p):
-    '''interpolated_string : TEXT PLUS ID
-                           | TEXT PLUS expression'''
+    '''
+    interpolated_string : TEXT PLUS ID
+                           | TEXT PLUS expression
+    '''
 
 #Fin aporte Jair Ramírez
 
 #Inicio aporte Tomas Bolaños
-#Entrada de Datos
-#Ejemplo String? input= stdin.readLineSync();
-
 
 #Estructura de Datos: Set
-#Ejemplos var halogens = {'fluorine', 'chlorine', 'bromine', 'iodine', 'astatine'};
-#var names = <String>{};
-#final constantSet = const {'fluorine','chlorine','bromine','iodine','astatine'};
+
 def p_set(p):
     '''
     set : VAR ID ASSIGN LBRACKET value_list RBRACKET SEMICOLON
@@ -214,9 +277,6 @@ def p_set(p):
     '''
 
 #Estructura de Control for
-#Ejemplos for (int i = 0; i < value; i++) { something }
-#for (final candidate in candidates) { something }
-#for (final Candidate(:atributo, :atributo) in candidates) { something}
 
 def p_for_inicio(p):
     '''
@@ -255,8 +315,7 @@ def p_for(p):
     for : FOR LPAREN for_parenthesis_content RPAREN LBRACKET statement_list RBRACKET
     '''
 
-#Funcion Constructor(muy difícil validar)
-#  Point(this.x, this.y);
+#Funcion Constructor
 
 def p_constructor_parenthesis_content(p):
     '''
@@ -271,7 +330,7 @@ def p_constructor(p):
 
 #Fin aporte de Tomas
 
-#Manejo de errores mas detallados
+#Manejo de errores
 def p_error(p):
     if p:
         print(f"Syntax error at token '{p.type}' (value: '{p.value}') on line {p.lineno}")
@@ -289,10 +348,10 @@ def test_parser(input_code):
 
 # Pruebas
 test_parser('String input = stdin.readLineSync();')
-test_parser('int x = 10;')  
+test_parser('int x = 10;')
+test_parser('int var1 = "hola".length;')  
 test_parser('x;')  
 test_parser('y;')  
-
 test_parser('void myFunction(int a, int b) {;}') 
 test_parser('myFunction(10, 20);')  
 test_parser('myFunction(10);')  

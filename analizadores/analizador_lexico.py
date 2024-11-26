@@ -77,6 +77,8 @@ reserved = {
     "Object": "OBJECT",
     "num": "NUM",
     "print": "PRINT",
+    "length": "LENGTH",
+
 }
 
 tokens = (
@@ -115,7 +117,6 @@ tokens = (
     "SEMICOLON",
     "QUESTION",
     "DOUBLE_COLON",
-    "LENGTH",
 ) + tuple(reserved.values())
 
 # Fin aporte de Jair Ramírez
@@ -151,7 +152,6 @@ t_COLON = r":"
 t_SEMICOLON = r";"
 t_QUESTION = r"\?"
 t_DOUBLE_COLON = r"::"
-t_LENGTH = r"length"
 # Fin Aporte Tomas Steven Bolaños Fajardo
 
 
