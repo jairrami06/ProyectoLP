@@ -257,7 +257,14 @@ def p_value_bool(p):
 #Fin aporte Jair Ramírez
 
 #Inicio aporte Tomas Bolaños
+#Entrada de Datos
+#Ejemplo String? input= stdin.readLineSync();
 
+
+#Estructura de Datos: Set
+#Ejemplos var halogens = {'fluorine', 'chlorine', 'bromine', 'iodine', 'astatine'};
+#var names = <String>{};
+#final constantSet = const {'fluorine','chlorine','bromine','iodine','astatine'};
 def p_set(p):
     '''
     set : VAR ID ASSIGN LBRACKET value_list RBRACKET SEMICOLON
@@ -266,6 +273,9 @@ def p_set(p):
     '''
 
 #Estructura de Control for
+#Ejemplos for (int i = 0; i < value; i++) { something }
+#for (final candidate in candidates) { something }
+#for (final Candidate(:atributo, :atributo) in candidates) { something}
 
 def p_for_classic_initialization(p):
     '''for_classic_initialization : INT ID ASSIGN NUMBER
@@ -307,7 +317,8 @@ def p_control_structures_for(p):
                               | for_in
                               | for_each'''
 
-#Funcion Constructor
+#Funcion Constructor(muy difícil validar)
+#  Point(this.x, this.y);
 
 def p_constructor_parenthesis_content(p):
     '''
@@ -413,6 +424,7 @@ test_parser('myFunction(10);')
 test_parser('otherFunction(10);')
 test_parser('String? input = stdin.readLineSync();')
 test_parser('int x = 10;')
+test_parser('int var1 = "hola".length;')
 test_parser('x;')
 test_parser('y;')
 test_parser('void myFunction(int a, int b) {;}')
