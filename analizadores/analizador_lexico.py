@@ -194,24 +194,33 @@ def t_newline(t):
 
 t_ignore = " \t"
 
+# Lista para almacenar los resultados léxicos y usarlos en la interfaz
+resultados_lexico = []
+
+# Manejo de errores léxicos
 def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
+    error_msg = f"Illegal character '{t.value[0]}'"
+    resultados_lexico.append(error_msg)  # Guardar el error en la lista
+    print(error_msg)
     t.lexer.skip(1)
 
+# Construcción del lexer
 lexer = lex.lex()
 
+# Función de análisis léxico
 def analizar_tokens(data):
+    global resultados
+    resultados_lexico.clear()  # Limpiar los resultados anteriores
     lexer.input(data)
-    tokens = []
 
     while True:
         tok = lexer.token()
         if not tok:
             break
-        tokens.append(tok)
+        resultados_lexico.append(str(tok))  # Guardar el token como una cadena
         print(tok)
 
-    return tokens
+    return resultados_lexico
 
 algoritmo = """
 'esto es un texto'
@@ -227,5 +236,4 @@ String mistring = stdin.readLineSync();
 """
 
 resultado = analizar_tokens(algoritmo)
-# Fin aporte de Jair Ramírez
 

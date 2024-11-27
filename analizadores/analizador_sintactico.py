@@ -1,6 +1,8 @@
 import ply.yacc as yacc
 from analizador_lexico import tokens
 
+resultados_semantico = []
+
 # Inicio aporte Jair Ramírez
 symbol_table = {
     "variables": {},
@@ -35,7 +37,9 @@ def p_variable_usage(p):
     '''variable_usage : ID'''
     variable_name = p[1]
     if variable_name not in symbol_table["variables"]:
-        print(f"Semantic error: Variable '{variable_name}' not declared before usage.")
+        errormssg=f"Semantic error: Variable '{variable_name}' not declared before usage."
+        resultados_semantico.append(errormssg)
+        print(errormssg)
     else:
         p[0] = symbol_table["variables"][variable_name]
 
@@ -44,12 +48,17 @@ def p_call_function(p):
                      | ID LPAREN RPAREN'''
     function_name = p[1]
     if function_name not in symbol_table["functions"]:
-        print(f"Semantic error: Function '{function_name}' not declared before usage.")
+        errormssg=f"Semantic error: Function '{function_name}' not declared before usage."
+        resultados_semantico.append(errormssg)
+        print(errormssg)
     else:
         expected_params = len(symbol_table["functions"][function_name])
         actual_params = len(p[3]) if len(p) == 5 else 0
         if expected_params != actual_params:
-            print(f"Semantic error: Function '{function_name}' expects {expected_params} parameters but {actual_params} were given.")
+            errormssg = f"Semantic error: Function '{function_name}' expects {expected_params} parameters but {actual_params} were given."
+            resultados_semantico.append(errormssg)
+            print(errormssg)
+
 
 
 def  p_data_input(p):
@@ -82,7 +91,9 @@ def p_function(p):
     function_name = p[2]
     parameters = p[4] if len(p) == 9 else []
     if function_name in symbol_table["functions"]:
-        print(f"Semantic error: Function '{function_name}' already declared.")
+        errormssg = f"Semantic error: Function '{function_name}' already declared."
+        resultados_semantico.append(errormssg)
+        print(errormssg)
     else:
         symbol_table["functions"][function_name] = parameters
 
@@ -93,7 +104,9 @@ def p_variable_definition(p):
                         | INT ID ASSIGN length SEMICOLON'''
     variable_name = p[2]
     if variable_name in symbol_table["variables"]:
-        print(f"Semantic error: Variable '{variable_name}' already declared.")
+        errormssg = f"Semantic error: Variable '{variable_name}' already declared."
+        resultados_semantico.append(errormssg)
+        print(errormssg)
     else:
         symbol_table["variables"][variable_name] = p[4]
 
@@ -288,21 +301,26 @@ def p_constructor(p):
 
 #Fin aporte de Tomas
 
-#Manejo de errores mas detallados
+resultados_sintactico = []
+# Manejo de errores más detallado
 def p_error(p):
     if p:
-        print(f"Syntax error at token '{p.type}' (value: '{p.value}') on line {p.lineno}")
+        error_message = f"Syntax error at token '{p.type}' (value: '{p.value}') on line {p.lineno}"
     else:
-        print("Syntax error at EOF")
+        error_message = "Syntax error at EOF"
+    resultados_sintactico.append(error_message)
+    print(error_message)
+
 
 # Inicializar el parser
 parser = yacc.yacc()
 
 # Función para ejecutar las pruebas
 def test_parser(input_code):
-    print("Parsing input:\n", input_code)
     result = parser.parse(input_code)
-    print("Parsing result:", result)
+    message = f"Parsing input : {input_code} \n Parsing result : {result}"
+    resultados_sintactico.append(message)
+    print(message)
 
 # Pruebas
 test_parser('int x = 10;')
@@ -312,15 +330,46 @@ test_parser('void myFunction(int a, int b) {;}')
 test_parser('myFunction(10, 20);')
 test_parser('myFunction(10);')
 test_parser('otherFunction(10);')
-test_parser('String input = stdin.readLineSync();')
+test_parser('String? input = stdin.readLineSync();')
 test_parser('int x = 10;')
-test_parser('int var1 = "hola".length;')  
-test_parser('x;')  
-test_parser('y;')  
-test_parser('void myFunction(int a, int b) {;}') 
-test_parser('myFunction(10, 20);')  
-test_parser('myFunction(10);')  
+test_parser('int var1 = "hola".length;')
+test_parser('x;')
+test_parser('y;')
+test_parser('void myFunction(int a, int b) {;}')
+test_parser('myFunction(10, 20);')
+test_parser('myFunction(10);')
 test_parser('otherFunction(10);')
+
+#Pruebas Tomas Bolaños
+'''
+for (int i = 0; i < value; i++) { 
+                   for (final candidate in candidates) { 
+                        for (final Candidate(:atributo, :atributo) in candidates) {
+                             print('Hola mundo');
+                        }
+                   }
+               }
+'''
+
+# Pruebas
+'''
+int x = 10;
+x;
+y;
+void myFunction(int a, int b) {;}
+myFunction(10, 20);
+myFunction(10);
+otherFunction(10);
+String? input = stdin.readLineSync();
+int x = 10;
+int var1 = "hola".length;
+x;
+y;
+void myFunction(int a, int b) {;}
+myFunction(10, 20);
+myFunction(10);
+otherFunction(10);
+'''
 
 #Pruebas Tomas Bolaños
 test_parser("for (int i = 0; i < value; i++) { for (final candidate in candidates) { for (final Candidate(:atributo, :atributo) in candidates) { print('Hola mundo');}}}")
