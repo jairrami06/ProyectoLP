@@ -20,6 +20,7 @@ def p_statement(p):
     '''statement : print
                  | data_input
                  | set
+                 | map
                  | constructor
                  | control_structures
                  | function
@@ -31,7 +32,8 @@ def p_statement(p):
 
 def p_control_structures(p):
     '''control_structures : control_structures_if_else
-                          | control_structures_for'''
+                          | control_structures_for
+                          | control_structures_while'''
 
 def p_variable_usage(p):
     '''variable_usage : ID'''
@@ -300,6 +302,67 @@ def p_constructor(p):
     '''
 
 #Fin aporte de Tomas
+
+# Aporte Víctor Valverde
+### Tipo de funcion
+def p_arrow_function(p):
+    """
+    function : type ID LPAREN parameter_list RPAREN ASSIGN GREATER expression
+    """
+
+
+### Estructura de control
+def p_control_structures_while(p):
+    """
+    control_structures_while : WHILE LPAREN conditions LBRACKET statement_list RBRACKET
+    """
+
+
+### Estructura de datos
+def p_map(p):
+    """
+    map : map_declaration map_assignment
+    """
+
+
+def p_map_declaration(p):
+    """
+    map_declaration : MAP LESS key_type COMMA type GREATER ID ASSIGN
+    """
+
+
+def p_map_assignment(p):
+    """
+    map_assignment : LBRACKET map_contents RBRACKET
+    """
+
+
+def p_map_contents(p):
+    """
+    map_contents : map_content
+                 | map_content COMMA map_contents
+    """
+
+
+def p_map_content(p):
+    """
+    map_content : key_value COLON value
+    """
+
+
+def p_key_value(p):
+    """
+    key_value : TEXT
+    """
+
+
+def p_key_type(p):
+    """
+    key_type : STRING
+    """
+# Fin aporte Víctor Valverde
+
+
 
 resultados_sintactico = []
 # Manejo de errores más detallado
