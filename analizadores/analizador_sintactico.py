@@ -105,7 +105,9 @@ def p_variable_definition(p):
                         | VAR ID ASSIGN expression SEMICOLON
                         | INT ID ASSIGN length SEMICOLON
                         | INT ID ASSIGN NUMBER SEMICOLON
-                        | DOUBLE ID ASSIGN NDOUBLE SEMICOLON'''
+                        | DOUBLE ID ASSIGN NDOUBLE SEMICOLON
+                        | DOUBLE ID ASSIGN simple_operations_arithmetics SEMICOLON'''
+
     variable_name = p[2]
     if variable_name in symbol_table["variables"]:
         errormssg = f"Semantic error: Variable '{variable_name}' already declared."
@@ -116,9 +118,25 @@ def p_variable_definition(p):
 
 def p_print(p):
     '''print : PRINT LPAREN RPAREN SEMICOLON
+             | PRINT LPAREN simple_operations_arithmetics RPAREN SEMICOLON
              | PRINT LPAREN value RPAREN SEMICOLON
              | PRINT LPAREN expression RPAREN SEMICOLON
              | PRINT LPAREN length RPAREN SEMICOLON'''
+# Regla para números enteros y decimales en el print
+def p_list_numbers(p):
+    '''list_numbers : NUMBER
+                    | NDOUBLE'''
+
+def p_simple_operators_arithmetics(p):
+    '''simple_operators_arithmetics : MINUS
+                                   | PLUS
+                                   | DIVIDE
+                                   | TIMES'''
+
+def p_simple_operations_arithmetics(p):
+    '''simple_operations_arithmetics : list_numbers simple_operators_arithmetics list_numbers
+    | list_numbers simple_operators_arithmetics list_numbers simple_operators_arithmetics simple_operations_arithmetics'''
+
 
 # Expresiones
 def p_expression_arithmetic(p):
@@ -126,6 +144,17 @@ def p_expression_arithmetic(p):
                   | expression MINUS expression
                   | expression TIMES expression
                   | expression DIVIDE expression'''
+    # Validación semántica: ambos operandos deben ser de tipo 'ndouble' o 'number'
+    left_value = p[1]  # Operando izquierdo
+    right_value = p[3]  # Operando derecho
+
+    # Validar que ambos sean de tipo numérico (ndouble o number)
+    if left_value not in ['ndouble', 'number'] or right_value not in ['ndouble', 'number']:
+        errormssg = f"Semantic error: Invalid types for arithmetic operation. Both operands must be 'ndouble' or 'number'."
+        resultados_semantico.append(errormssg)
+        print(errormssg)
+    else:
+        p[0] = 'ndouble'  # El resultado de la operación será de tipo 'ndouble' si es una operación aritmética válida
 
 def p_expression_logic(p):
     '''expression : expression AND expression
@@ -388,7 +417,8 @@ def test_parser(input_code):
     print(message)
 
 # Pruebas
-test_parser('int x = 10;')
+test_parser('print(10+202/3*5);')#problema con 1'-2, lo detecta como entero -2, y no ocmo una resta
+test_parser('double x = 10+4;')
 test_parser('x;')
 test_parser('y;')
 test_parser('void myFunction(int a, int b) {;}')
