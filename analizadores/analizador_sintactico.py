@@ -103,7 +103,9 @@ def p_variable_definition(p):
     '''variable_definition : type ID ASSIGN expression SEMICOLON
                         | DYNAMIC ID ASSIGN expression SEMICOLON
                         | VAR ID ASSIGN expression SEMICOLON
-                        | INT ID ASSIGN length SEMICOLON'''
+                        | INT ID ASSIGN length SEMICOLON
+                        | INT ID ASSIGN NUMBER SEMICOLON
+                        | DOUBLE ID ASSIGN NDOUBLE SEMICOLON'''
     variable_name = p[2]
     if variable_name in symbol_table["variables"]:
         errormssg = f"Semantic error: Variable '{variable_name}' already declared."
