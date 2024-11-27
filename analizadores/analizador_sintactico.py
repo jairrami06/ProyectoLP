@@ -8,6 +8,7 @@ symbol_table = {
     "variables": {},
     "functions": {},
 }
+
 # Estructura principal
 def p_program(p):
     '''program : statement_list'''
@@ -28,6 +29,8 @@ def p_statement(p):
                  | variable_definition
                  | variable_usage
                  | call_function
+                 | COMMENT_MULTI
+                 | COMMENT_SINGLE
                  | SEMICOLON'''
 
 def p_control_structures(p):
@@ -36,7 +39,9 @@ def p_control_structures(p):
                           | control_structures_while'''
 
 def p_variable_usage(p):
-    '''variable_usage : ID'''
+    '''variable_usage : ID SEMICOLON
+                    | ID ASSIGN value SEMICOLON
+    '''
     variable_name = p[1]
     if variable_name not in symbol_table["variables"]:
         errormssg=f"Semantic error: Variable '{variable_name}' not declared before usage."
@@ -103,9 +108,7 @@ def p_variable_definition(p):
     '''variable_definition : type ID ASSIGN expression SEMICOLON
                         | DYNAMIC ID ASSIGN expression SEMICOLON
                         | VAR ID ASSIGN expression SEMICOLON
-                        | INT ID ASSIGN length SEMICOLON
-                        | INT ID ASSIGN NUMBER SEMICOLON
-                        | DOUBLE ID ASSIGN NDOUBLE SEMICOLON'''
+                        '''
     variable_name = p[2]
     if variable_name in symbol_table["variables"]:
         errormssg = f"Semantic error: Variable '{variable_name}' already declared."
@@ -116,26 +119,47 @@ def p_variable_definition(p):
 
 def p_print(p):
     '''print : PRINT LPAREN RPAREN SEMICOLON
-             | PRINT LPAREN value RPAREN SEMICOLON
-             | PRINT LPAREN expression RPAREN SEMICOLON
-             | PRINT LPAREN length RPAREN SEMICOLON'''
+             | PRINT LPAREN print_options RPAREN SEMICOLON
+    '''
 
+def p_print_options(p):
+    '''
+        print_options : interpolated_string
+                    | expression
+                    | length
+                    | call_function
+    '''
 # Expresiones
 def p_expression_arithmetic(p):
-    '''expression : expression PLUS expression
-                  | expression MINUS expression
-                  | expression TIMES expression
-                  | expression DIVIDE expression'''
+    '''expression : operations'''
 
-def p_expression_logic(p):
-    '''expression : expression AND expression
-                  | expression OR expression'''
+def p_operations(p):
+    '''
+        operations : operation 
+                  | operation operand operations    
+    ''' 
+
+def p_operation(p):
+    '''
+        operation : operand operator operand    
+    ''' 
+
+def p_operand(p):
+    '''
+        operand : NUMBER
+                  | DOUBLE
+    ''' 
+    
+def p_operator(p):
+    '''
+        operator : PLUS
+                  | MINUS
+                  | TIMES
+                  | DIVIDE
+    '''    
 
 def p_expression_comparison(p):
-    '''expression : value comparator value'''
-
-def p_expression_concat(p):
-    '''expression : value PLUS value'''
+    '''expression : conditions'''
 
 def p_expression_value(p):
     '''expression : value'''
@@ -158,13 +182,12 @@ def p_else_block(p):
 
 def p_conditions(p):
     '''conditions : condition
-                  | conditions AND conditions
-                  | conditions OR conditions'''
+                  | condition AND conditions
+                  | condition OR conditions'''
 
 def p_condition(p):
     '''condition : value comparator value
-                 | NOT condition
-                 | LPAREN conditions RPAREN'''
+                 | NOT condition'''
 
 def p_comparator(p):
     '''comparator : GREATER
@@ -187,13 +210,6 @@ def p_parameter(p):
               | REQUIRED type ID'''
     p[0] = p[2] if len(p) == 3 else p[3]
 
-# Tipos de datos
-def p_type(p):
-    '''type : INT
-            | DOUBLE
-            | STRING
-            | BOOL
-            | LIST'''
 
 def p_call_list(p):
     '''
@@ -208,35 +224,40 @@ def p_list_definition(p):
 
 def p_value_list(p):
     '''value_list : value
-                  | value_list COMMA value'''
+                  | value COMMA value_list'''
 
+def p_interpolated_string(p):
+    '''interpolated_string : string_part
+                           | string_part PLUS interpolated_string'''
+    
+def p_string_part(p):
+    '''
+    string_part : TEXT
+                    | TEXT PLUS value
+    '''
 # Valores
+def p_type(p):
+    '''type : INT
+            | DOUBLE
+            | STRING
+            | BOOL
+            | LIST'''
+    
 def p_value(p):
     '''value : NUMBER
              | NDOUBLE
              | TEXT
-             | ID
-             | interpolated_string'''
+             | ID'''
 
 def p_value_bool(p):
     '''value : TRUE
              | FALSE'''
 
-def p_interpolated_string(p):
-    '''interpolated_string : TEXT PLUS ID
-                           | TEXT PLUS expression'''
 
 #Fin aporte Jair Ramírez
 
 #Inicio aporte Tomas Bolaños
-#Entrada de Datos
-#Ejemplo String? input= stdin.readLineSync();
 
-
-#Estructura de Datos: Set
-#Ejemplos var halogens = {'fluorine', 'chlorine', 'bromine', 'iodine', 'astatine'};
-#var names = <String>{};
-#final constantSet = const {'fluorine','chlorine','bromine','iodine','astatine'};
 def p_set(p):
     '''
     set : VAR ID ASSIGN LBRACKET value_list RBRACKET SEMICOLON
@@ -245,9 +266,6 @@ def p_set(p):
     '''
 
 #Estructura de Control for
-#Ejemplos for (int i = 0; i < value; i++) { something }
-#for (final candidate in candidates) { something }
-#for (final Candidate(:atributo, :atributo) in candidates) { something}
 
 def p_for_classic_initialization(p):
     '''for_classic_initialization : INT ID ASSIGN NUMBER
@@ -289,8 +307,7 @@ def p_control_structures_for(p):
                               | for_in
                               | for_each'''
 
-#Funcion Constructor(muy difícil validar)
-#  Point(this.x, this.y);
+#Funcion Constructor
 
 def p_constructor_parenthesis_content(p):
     '''
@@ -311,7 +328,6 @@ def p_arrow_function(p):
     """
     function : type ID LPAREN parameter_list RPAREN ASSIGN GREATER expression
     """
-
 
 ### Estructura de control
 def p_control_structures_while(p):
@@ -397,7 +413,6 @@ test_parser('myFunction(10);')
 test_parser('otherFunction(10);')
 test_parser('String? input = stdin.readLineSync();')
 test_parser('int x = 10;')
-test_parser('int var1 = "hola".length;')
 test_parser('x;')
 test_parser('y;')
 test_parser('void myFunction(int a, int b) {;}')

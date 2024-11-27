@@ -115,6 +115,8 @@ tokens = (
     "SEMICOLON",
     "QUESTION",
     "DOUBLE_COLON",
+    "COMMENT_MULTI",
+    "COMMENT_SINGLE",
 ) + tuple(reserved.values())
 # Fin aporte de Jair Ramírez
 
