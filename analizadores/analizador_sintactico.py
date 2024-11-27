@@ -1,11 +1,11 @@
 import ply.yacc as yacc
 from analizador_lexico import tokens
 
+# Inicio aporte Jair Ramírez
 symbol_table = {
     "variables": {},
     "functions": {},
 }
-# Inicio aporte Jair Ramírez
 # Estructura principal
 def p_program(p):
     '''program : statement_list'''
@@ -51,6 +51,15 @@ def p_call_function(p):
         if expected_params != actual_params:
             print(f"Semantic error: Function '{function_name}' expects {expected_params} parameters but {actual_params} were given.")
 
+
+def  p_data_input(p):
+    '''data_input : STRING ID ASSIGN STDIN DOT READLINESYNC LPAREN RPAREN SEMICOLON
+               | STRING QUESTION ID ASSIGN STDIN DOT READLINESYNC LPAREN RPAREN SEMICOLON'''
+
+def  p_length(p):
+    '''length : call_list DOT LENGTH
+              | TEXT DOT LENGTH'''
+
 def p_argument_list(p):
     '''
     argument_list : expression
@@ -80,7 +89,8 @@ def p_function(p):
 def p_variable_definition(p):
     '''variable_definition : type ID ASSIGN expression SEMICOLON
                         | DYNAMIC ID ASSIGN expression SEMICOLON
-                        | VAR ID ASSIGN expression SEMICOLON'''
+                        | VAR ID ASSIGN expression SEMICOLON
+                        | INT ID ASSIGN length SEMICOLON'''
     variable_name = p[2]
     if variable_name in symbol_table["variables"]:
         print(f"Semantic error: Variable '{variable_name}' already declared.")
@@ -90,7 +100,8 @@ def p_variable_definition(p):
 def p_print(p):
     '''print : PRINT LPAREN RPAREN SEMICOLON
              | PRINT LPAREN value RPAREN SEMICOLON
-             | PRINT LPAREN expression RPAREN SEMICOLON'''
+             | PRINT LPAREN expression RPAREN SEMICOLON
+             | PRINT LPAREN length RPAREN SEMICOLON'''
 
 # Expresiones
 def p_expression_arithmetic(p):
@@ -167,10 +178,16 @@ def p_type(p):
             | BOOL
             | LIST'''
 
+def p_call_list(p):
+    '''
+    call_list : LSBRACKET value_list RSBRACKET
+    '''
+
 # Listas
 def p_list_definition(p):
-    '''list_definition : LIST LSBRACKET value_list RSBRACKET SEMICOLON
-                       | LIST LESS type GREATER ID ASSIGN LSBRACKET value_list RSBRACKET SEMICOLON'''
+    '''
+    list_definition : LIST LESS type GREATER ID ASSIGN LSBRACKET value_list RSBRACKET SEMICOLON
+    '''
 
 def p_value_list(p):
     '''value_list : value
@@ -197,10 +214,7 @@ def p_interpolated_string(p):
 #Inicio aporte Tomas Bolaños
 #Entrada de Datos
 #Ejemplo String? input= stdin.readLineSync();
-def  p_data_input(p):
-    '''
-    data_input : STRING QUESTION ID ASSIGN STDIN DOT READLINESYNC LPAREN RPAREN SEMICOLON
-    '''
+
 
 #Estructura de Datos: Set
 #Ejemplos var halogens = {'fluorine', 'chlorine', 'bromine', 'iodine', 'astatine'};
@@ -291,30 +305,13 @@ def test_parser(input_code):
     print("Parsing result:", result)
 
 # Pruebas
-#test_parser('int x = 10;')
-#test_parser('x;')
-#test_parser('y;')
-
-#test_parser('void myFunction(int a, int b) {;}')
-#test_parser('myFunction(10, 20);')
-#test_parser('myFunction(10);')
-#test_parser('otherFunction(10);')
-
-#Pruebas Tomas Bolaños
-test_parser(print('hola'))
-test_parser('30+5')
-test_parser('30-5')
-test_parser('30/5')
-test_parser('30*5')
-test_parser('int x = 200;')
-test_parser('int y = 40;')
-test_parser('int z = 0;')
-test_parser('z = x + y')
-test_parser('z = x - y')
-test_parser('z = x * y')
-test_parser('z = x / y')
-
-#Pruebas Fin Tomas Bolaños
+test_parser('int x = 10;')
+test_parser('x;')
+test_parser('y;')
+test_parser('void myFunction(int a, int b) {;}')
+test_parser('myFunction(10, 20);')
+test_parser('myFunction(10);')
+test_parser('otherFunction(10);')
 test_parser('String input = stdin.readLineSync();')
 test_parser('int x = 10;')
 test_parser('int var1 = "hola".length;')  
@@ -323,4 +320,7 @@ test_parser('y;')
 test_parser('void myFunction(int a, int b) {;}') 
 test_parser('myFunction(10, 20);')  
 test_parser('myFunction(10);')  
-test_parser('otherFunction(10);')  
+test_parser('otherFunction(10);')
+
+#Pruebas Tomas Bolaños
+test_parser("for (int i = 0; i < value; i++) { for (final candidate in candidates) { for (final Candidate(:atributo, :atributo) in candidates) { print('Hola mundo');}}}")
