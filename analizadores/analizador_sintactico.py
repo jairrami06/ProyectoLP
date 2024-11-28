@@ -125,20 +125,16 @@ def p_variable_definition(p):
 
 def p_print(p):
     '''print : PRINT LPAREN RPAREN SEMICOLON
-             | PRINT LPAREN print_options RPAREN SEMICOLON
+             | PRINT LPAREN expression RPAREN SEMICOLON
     '''
 
-def p_print_options(p):
-    '''
-        print_options : expression
-                    | length
-                    | call_function
-    '''
 # Expresiones
-def p_expression_cases(p):
+def p_expression(p):
     '''expression : operations
-                    | length
-                    | call_function'''
+                  | value
+                  | conditions
+                  | length
+                  | call_function'''
 
 def p_operations(p):
     '''
@@ -162,11 +158,6 @@ def p_operator(p):
                   | INT_DIVIDE
     '''    
 
-def p_expression_comparison(p):
-    '''expression : conditions'''
-
-def p_expression_value(p):
-    '''expression : value'''
 
 def p_control_structures_if_else(p):
     '''control_structures_if_else : if_block
@@ -238,10 +229,9 @@ def p_type(p):
     '''
     
 def p_value(p):
-    '''value : NUMBER
-             | NDOUBLE
+    '''value : operand
              | TEXT
-             | ID'''
+    '''
 
 def p_value_bool(p):
     '''value : TRUE
