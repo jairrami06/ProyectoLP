@@ -4,10 +4,8 @@ from analizador_lexico import tokens
 resultados_semantico = []
 
 # Inicio aporte Jair Ramírez
-symbol_table = {
-    "variables": {},
-    "functions": {},
-}
+variables = {}
+functions = {}
 
 # Estructura principal
 def p_program(p):
@@ -47,29 +45,28 @@ def p_variable_usage(p):
     '''variable_usage : ID SEMICOLON
                     | ID ASSIGN expression SEMICOLON
     '''
-    variable_name = p[1]
-    if variable_name not in symbol_table["variables"]:
-        errormssg=f"Semantic error: Variable '{variable_name}' not declared before usage."
-        resultados_semantico.append(errormssg)
-        print(errormssg)
+    if p[1] in variables:
+        pass
     else:
-        p[0] = symbol_table["variables"][variable_name]
+        errormssg = f"error semantico variable {p[1]} no inicializada"
+        resultados_semantico.append(errormssg)
 
 def p_call_function(p):
     '''call_function : ID LPAREN argument_list RPAREN
                      | ID LPAREN RPAREN'''
     function_name = p[1]
-    if function_name not in symbol_table["functions"]:
-        errormssg=f"Semantic error: Function '{function_name}' not declared before usage."
-        resultados_semantico.append(errormssg)
-        print(errormssg)
-    else:
-        expected_params = len(symbol_table["functions"][function_name])
+    if p[1] in functions:
+        expected_params = len(functions[function_name])
         actual_params = len(p[3]) if len(p) == 5 else 0
         if expected_params != actual_params:
             errormssg = f"Semantic error: Function '{function_name}' expects {expected_params} parameters but {actual_params} were given."
             resultados_semantico.append(errormssg)
-            print(errormssg)
+    else:
+        errormssg = f"error semantico función {p[1]} no inicializada"
+        resultados_semantico.append(errormssg)
+  
+    
+
 
 
 
@@ -103,25 +100,14 @@ def p_function(p):
     '''
     function_name = p[2]
     parameters = p[4] if len(p) == 9 else []
-    if function_name in symbol_table["functions"]:
-        errormssg = f"Semantic error: Function '{function_name}' already declared."
-        resultados_semantico.append(errormssg)
-        print(errormssg)
-    else:
-        symbol_table["functions"][function_name] = parameters
+    functions[function_name] = parameters
 
 def p_variable_definition(p):
     '''variable_definition : type ID ASSIGN expression SEMICOLON
                         | DYNAMIC ID ASSIGN expression SEMICOLON
                         | VAR ID ASSIGN expression SEMICOLON
                         '''
-    variable_name = p[2]
-    if variable_name in symbol_table["variables"]:
-        errormssg = f"Semantic error: Variable '{variable_name}' already declared."
-        resultados_semantico.append(errormssg)
-        print(errormssg)
-    else:
-        symbol_table["variables"][variable_name] = p[4]
+    variables[p[2]] = p[4]
 
 def p_print(p):
     '''print : PRINT LPAREN RPAREN SEMICOLON
