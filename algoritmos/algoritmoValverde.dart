@@ -1,22 +1,40 @@
-void main() {
-  // Definimos el número de Avogadro
-  const double numeroDeAvogadro = 6.02214076e23;
+// Función principal
+void @main() {
+  // Definir listas de títulos, taquillas y años
+  List<String> titulos = ['Inception', 'Parasite', 'Interstellar', 'Whiplash'];
+  List<double> taquillas = [829.89, 258.8, 677.5, 49.0];
+  List<int> anios = [2010, 2019, 2014, 2014];
 
-  // Función para convertir moles a moléculas
-  double molesAMoleculas(double moles) {
-    return moles * numeroDeAvogadro;
+  // Función flecha para imprimir la descripción de una película
+  var imprimirDescripcion = (int i) => print('${titulos[i]} (${anios[i]}) - Taquilla: \$${taquillas[i]} millones');
+
+  // Imprimir descripciones de todas las películas
+  for (int i = 0; i < titulos.length; i++) {
+    imprimirDescripcion(i);
   }
 
-  // Función para convertir moléculas a moles
-  double moleculasAMoles(double moleculas) {
-    return moleculas / numeroDeAvogadro;
+  // Buscar una película específica por título
+  String claveBuscada = 'Inception';
+  int i = 0;
+  while (i < titulos.length) {
+    if (titulos[i] == claveBuscada) {
+      print('Película encontrada: ${titulos[i]} (${anios[i]}) - Taquilla: \$${taquillas[i]} millones');
+      break;
+    }
+    i++;
   }
 
-  double moles = 2.0;
-  double moleculas = molesAMoleculas(moles);
-  print('$moles moles es igual a $moleculas moléculas.');
+  // Regla sencilla de sintaxis: función flecha para agregar una nueva película
+  var agregarPelicula = (String titulo, double taquilla, int anio) {
+    if (!titulos.contains(titulo)) {
+      titulos.add(titulo);
+      taquillas.add(taquilla);
+      anios.add(anio);
+      print('Película agregada: $titulo ($anio) - Taquilla: \$${taquilla} millones');
+    } else {
+      print('La película "$titulo" ya existe.');
+    }
+  };
 
-  moleculas = 1.20442815e24;
-  moles = moleculasAMoles(moleculas);
-  print('$moleculas moléculas es igual a $moles moles.');
-}
+  // Ejemplo de agregar una nueva película
+  agregarPelicula('The Dark Knight', 1004.9, 2008);
