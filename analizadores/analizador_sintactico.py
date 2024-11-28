@@ -16,22 +16,39 @@ def p_statement_list(p):
                       | statement_list statement'''
 
 def p_statement(p):
-    '''statement : print
-                 | data_input
-                 | set
-                 | map
+    '''statement : commonstatement
                  | constructor
-                 | control_structures
                  | function
+                 '''
+
+def p_funcstatement_list(p):
+    '''funcstatement_list : funcstatement
+                      | funcstatement_list funcstatement'''
+
+def p_funcstatement(p):
+    '''
+    funcstatement : commonstatement
+                 | return
+                 | data_input
+                 | variable_usage
+                 | SEMICOLON
+                 | control_structures
+                 | print
+                 | call_function
+
+    '''
+
+def p_commonstatement(p):
+     '''
+    commonstatement : COMMENT_MULTI
+                 | COMMENT_SINGLE
                  | list_definition
                  | variable_definition
-                 | variable_usage
-                 | call_function
-                 | return
-                 | COMMENT_MULTI
-                 | COMMENT_SINGLE
-                 | SEMICOLON'''
+                 | set
+                 | map
 
+    '''
+     
 def p_return(p):
     '''return : RETURN expression SEMICOLON'''
 
@@ -48,7 +65,7 @@ def p_variable_usage(p):
     if p[1] in variables:
         pass
     else:
-        errormssg = f"error semantico variable {p[1]} no inicializada"
+        errormssg = f"Semantic error: variable {p[1]} not initialized"
         resultados_semantico.append(errormssg)
 
 def p_call_function(p):
@@ -62,13 +79,8 @@ def p_call_function(p):
             errormssg = f"Semantic error: Function '{function_name}' expects {expected_params} parameters but {actual_params} were given."
             resultados_semantico.append(errormssg)
     else:
-        errormssg = f"error semantico función {p[1]} no inicializada"
+        errormssg = f"Semantic error: function {p[1]} not intialized"
         resultados_semantico.append(errormssg)
-  
-    
-
-
-
 
 def  p_data_input(p):
     '''data_input : STRING ID ASSIGN STDIN DOT READLINESYNC LPAREN RPAREN SEMICOLON
@@ -91,10 +103,10 @@ def p_argument_list(p):
 
 def p_function(p):
     '''
-    function : type ID LPAREN parameter_list RPAREN LBRACKET statement_list RBRACKET
-             | VOID ID LPAREN parameter_list RPAREN LBRACKET statement_list RBRACKET
-             | type ID LPAREN RPAREN LBRACKET statement_list RBRACKET
-             | VOID ID LPAREN RPAREN LBRACKET statement_list RBRACKET
+    function : type ID LPAREN parameter_list RPAREN LBRACKET funcstatement_list RBRACKET
+             | VOID ID LPAREN parameter_list RPAREN LBRACKET funcstatement_list RBRACKET
+             | type ID LPAREN RPAREN LBRACKET funcstatement_list RBRACKET
+             | VOID ID LPAREN RPAREN LBRACKET funcstatement_list RBRACKET
              | VOID ID LPAREN RPAREN LBRACKET RBRACKET
              | VOID ID LPAREN parameter_list RPAREN LBRACKET RBRACKET
     '''
@@ -152,14 +164,14 @@ def p_control_structures_if_else(p):
                           | if_block else_block'''
 
 def p_if_block(p):
-    '''if_block : IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET'''
+    '''if_block : IF LPAREN conditions RPAREN LBRACKET funcstatement_list RBRACKET'''
 
 def p_else_if_blocks(p):
-    '''else_if_blocks : ELSE IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET
-                      | else_if_blocks ELSE IF LPAREN conditions RPAREN LBRACKET statement_list RBRACKET'''
+    '''else_if_blocks : ELSE IF LPAREN conditions RPAREN LBRACKET funcstatement_list RBRACKET
+                      | else_if_blocks ELSE IF LPAREN conditions RPAREN LBRACKET funcstatement_list RBRACKET'''
 
 def p_else_block(p):
-    '''else_block : ELSE LBRACKET statement_list RBRACKET'''
+    '''else_block : ELSE LBRACKET funcstatement_list RBRACKET'''
 
 def p_conditions(p):
     '''conditions : condition
@@ -264,13 +276,13 @@ def p_for_classic_parenthesis_content(p):
     '''for_classic_parenthesis_content : for_classic_initialization SEMICOLON for_classic_conditions SEMICOLON for_classic_changes'''
 
 def p_for_classic(p):
-    '''for_classic : FOR LPAREN for_classic_parenthesis_content RPAREN LBRACKET statement_list RBRACKET'''
+    '''for_classic : FOR LPAREN for_classic_parenthesis_content RPAREN LBRACKET funcstatement_list RBRACKET'''
 
 def p_for_in_parenthesis_content(p):
     '''for_in_parenthesis_content : FINAL ID IN ID'''
 
 def p_for_in(p):
-    '''for_in : FOR LPAREN for_in_parenthesis_content RPAREN LBRACKET statement_list RBRACKET'''
+    '''for_in : FOR LPAREN for_in_parenthesis_content RPAREN LBRACKET funcstatement_list RBRACKET'''
 
 def p_for_each_parenthesis_parenthesis_content(p):
     '''for_each_parenthesis_parenthesis_content : COLON ID
@@ -280,7 +292,7 @@ def p_for_each_parenthesis_content(p):
     '''for_each_parenthesis_content : FINAL ID LPAREN for_each_parenthesis_parenthesis_content RPAREN IN ID'''
 
 def p_for_each(p):
-    '''for_each : FOR LPAREN for_each_parenthesis_content RPAREN LBRACKET statement_list RBRACKET'''
+    '''for_each : FOR LPAREN for_each_parenthesis_content RPAREN LBRACKET funcstatement_list RBRACKET'''
 
 def p_control_structures_for(p):
     '''control_structures_for : for_classic
@@ -313,7 +325,7 @@ def p_arrow_function(p):
 ### Estructura de control
 def p_control_structures_while(p):
     """
-    control_structures_while : WHILE LPAREN conditions RPAREN LBRACKET statement_list RBRACKET
+    control_structures_while : WHILE LPAREN conditions RPAREN LBRACKET funcstatement_list RBRACKET
     """
 
 
