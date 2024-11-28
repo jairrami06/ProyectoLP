@@ -85,6 +85,7 @@ tokens = (
     "MINUS",
     "TIMES",
     "DIVIDE",
+    "INT_DIVIDE",
     "LPAREN",
     "RPAREN",
     "LBRACKET",
@@ -124,6 +125,7 @@ tokens = (
 t_PLUS           = r"\+"
 t_MINUS          = r"-"
 t_TIMES          = r"\*"
+t_INT_DIVIDE     = r"~/"
 t_DIVIDE         = r"/"
 t_LPAREN         = r"\("
 t_RPAREN         = r"\)"

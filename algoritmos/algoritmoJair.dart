@@ -1,74 +1,34 @@
-import 'dart:io';
+int binarySearch(int target) {
+  // Lista ordenada definida dentro del método.
+  List<int> sortedList = [1, 3, 5, 7, 9, 11, 13, 15, 17];
+
+  int left = 0;
+  int right = sortedList.length;
+
+  while (left <= right) {
+    int middle = left + right - left; 
+    middle = middle ~/ 2;
+
+    if (sortedList[middle] == target) {
+      return middle; // Se encontró el elemento.
+    } else if (sortedList[middle] < target) {
+      left = middle + 1; // Buscar en el lado derecho.
+    } else {
+      right = middle - 1; // Buscar en el lado izquierdo.
+    }
+  }
+
+  return -1; // El elemento no está presente en la lista.
+}
 
 void main() {
-  print('¡Bienvenido al Buscador de Números Primos!');
-  print('Ingrese el rango donde buscar primos.');
+  int target = 7;
 
-  // Leer rango del usuario
-  stdout.write('Inicio del rango: ');
-  int? rangoInicio = int.tryParse(stdin.readLineSync() ?? '');
-  stdout.write('Fin del rango: ');
-  int? rangoFin = int.tryParse(stdin.readLineSync() ?? '');
+  int result = binarySearch(target);
 
-  // Validar entrada
-  if (rangoInicio == null || rangoFin == null || rangoInicio > rangoFin || rangoInicio < 2) {
-    print('Por favor, ingrese un rango válido (mayor o igual a 2).');
-    return;
+  if (result != -1) {
+    print('El número $target se encuentra en el índice $result.');
+  } else {
+    print('El número $target no está en la lista.');
   }
-
-  // Encontrar números primos
-  List<int> primos = encontrarPrimos(rangoInicio, rangoFin);
-
-  if (primos.isEmpty) {
-    print('No se encontraron números primos en el rango proporcionado.');
-    return;
-  }
-
-  // Mostrar los resultados
-  print('Números primos encontrados: $primos');
-  mostrarEstadisticas(primos);
-
-  // Guardar resultados en un archivo
-  guardarEnArchivo(primos, 'primos.txt');
-  print('Los resultados se han guardado en el archivo "primos.txt".');
-}
-
-List<int> encontrarPrimos(int inicio, int fin) {
-  List<bool> esPrimo = List.filled(fin + 1, true);
-  esPrimo[0] = esPrimo[1] = false;
-
-  for (int i = 2; i * i <= fin; i++) {
-    if (esPrimo[i]) {
-      for (int j = i * i; j <= fin; j += i) {
-        esPrimo[j] = false;
-      }
-    }
-  }
-
-  List<int> primos = [];
-  for (int k = inicio; k <= fin; k++) {
-    if (esPrimo[k]) {
-      primos.add(k);
-    }
-  }
-  return primos;
-}
-
-void mostrarEstadisticas(List<int> primos) {
-  int suma = primos.reduce((a, b) => a + b);
-  double promedio = suma / primos.length;
-  int maximo = primos.last;
-  int minimo = primos.first;
-
-  print('Estadísticas de los números primos encontrados:');
-  print('Cantidad de números primos: ${primos.length}');
-  print('Suma de los números primos: $suma');
-  print('Promedio de los números primos: ${promedio.toStringAsFixed(2)}');
-  print('Primo más pequeño: $minimo');
-  print('Primo más grande: $maximo');
-}
-
-void guardarEnArchivo(List<int> primos, String nombreArchivo) {
-  File archivo = File(nombreArchivo);
-  archivo.writeAsStringSync('Números primos: ${primos.join(', ')}', mode: FileMode.write);
 }

@@ -29,10 +29,15 @@ def p_statement(p):
                  | variable_definition
                  | variable_usage
                  | call_function
+                 | return
                  | COMMENT_MULTI
                  | COMMENT_SINGLE
                  | SEMICOLON'''
 
+def p_return(p):
+    '''return : RETURN expression SEMICOLON'''
+
+    
 def p_control_structures(p):
     '''control_structures : control_structures_if_else
                           | control_structures_for
@@ -74,7 +79,8 @@ def  p_data_input(p):
 
 def  p_length(p):
     '''length : call_list DOT LENGTH
-              | TEXT DOT LENGTH'''
+              | TEXT DOT LENGTH
+              | ID DOT LENGTH'''
 
 def p_argument_list(p):
     '''
@@ -124,8 +130,7 @@ def p_print(p):
 
 def p_print_options(p):
     '''
-        print_options : interpolated_string
-                    | expression
+        print_options : expression
                     | length
                     | call_function
     '''
@@ -156,6 +161,7 @@ def p_operator(p):
                   | MINUS
                   | TIMES
                   | DIVIDE
+                  | INT_DIVIDE
     '''    
 
 def p_expression_comparison(p):
@@ -226,22 +232,12 @@ def p_value_list(p):
     '''value_list : value
                   | value COMMA value_list'''
 
-def p_interpolated_string(p):
-    '''interpolated_string : string_part
-                           | string_part PLUS interpolated_string'''
-    
-def p_string_part(p):
-    '''
-    string_part : TEXT
-                    | TEXT PLUS value
-    '''
-# Valores
 def p_type(p):
     '''type : INT
             | DOUBLE
             | STRING
             | BOOL
-            | LIST'''
+    '''
     
 def p_value(p):
     '''value : NUMBER
@@ -424,7 +420,6 @@ test_parser('myFunction(10);')
 test_parser('otherFunction(10);')
 test_parser('String? input = stdin.readLineSync();')
 test_parser('int x = 10;')
-test_parser('int var1 = "hola".length;')
 test_parser('x;')
 test_parser('y;')
 test_parser('void myFunction(int a, int b) {;}')
@@ -432,36 +427,6 @@ test_parser('myFunction(10, 20);')
 test_parser('myFunction(10);')
 test_parser('otherFunction(10);')
 
-#Pruebas Tomas Bolaños
-'''
-for (int i = 0; i < value; i++) { 
-                   for (final candidate in candidates) { 
-                        for (final Candidate(:atributo, :atributo) in candidates) {
-                             print('Hola mundo');
-                        }
-                   }
-               }
-'''
-
-# Pruebas
-'''
-int x = 10;
-x;
-y;
-void myFunction(int a, int b) {;}
-myFunction(10, 20);
-myFunction(10);
-otherFunction(10);
-String? input = stdin.readLineSync();
-int x = 10;
-int var1 = "hola".length;
-x;
-y;
-void myFunction(int a, int b) {;}
-myFunction(10, 20);
-myFunction(10);
-otherFunction(10);
-'''
 
 #Pruebas Tomas Bolaños
 test_parser("for (int i = 0; i < value; i++) { for (final candidate in candidates) { for (final Candidate(:atributo, :atributo) in candidates) { print('Hola mundo');}}}")
