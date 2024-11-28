@@ -227,16 +227,7 @@ def analizar_tokens(data):
     return resultados_lexico
 
 algoritmo = """
-'esto es un texto'
-"esto es un texto"
-3.10
-4.5e3
-20
--20
--0
--0.0000
-0.000
-String mistring = stdin.readLineSync();
+
 """
 
 resultado = analizar_tokens(algoritmo)

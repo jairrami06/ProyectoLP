@@ -9,9 +9,9 @@ int binarySearch(int target) {
     int middle = left + right - left; 
     middle = middle ~/ 2;
 
-    if (sortedList[middle] == target) {
+    if (middle == target) {
       return middle; // Se encontró el elemento.
-    } else if (sortedList[middle] < target) {
+    } else if (middle < target) {
       left = middle + 1; // Buscar en el lado derecho.
     } else {
       right = middle - 1; // Buscar en el lado izquierdo.

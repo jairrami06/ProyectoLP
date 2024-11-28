@@ -45,7 +45,7 @@ def p_control_structures(p):
 
 def p_variable_usage(p):
     '''variable_usage : ID SEMICOLON
-                    | ID ASSIGN value SEMICOLON
+                    | ID ASSIGN expression SEMICOLON
     '''
     variable_name = p[1]
     if variable_name not in symbol_table["variables"]:
@@ -135,24 +135,22 @@ def p_print_options(p):
                     | call_function
     '''
 # Expresiones
-def p_expression_arithmetic(p):
-    '''expression : operations'''
+def p_expression_cases(p):
+    '''expression : operations
+                    | length
+                    | call_function'''
 
 def p_operations(p):
     '''
-        operations : operation 
-                  | operation operand operations    
-    ''' 
-
-def p_operation(p):
-    '''
-        operation : operand operator operand    
+        operations : operand 
+                  | operand operator operations    
     ''' 
 
 def p_operand(p):
     '''
         operand : NUMBER
-                  | DOUBLE
+                  | NDOUBLE
+                  | ID
     ''' 
     
 def p_operator(p):
@@ -193,7 +191,7 @@ def p_conditions(p):
 
 def p_condition(p):
     '''condition : value comparator value
-                 | NOT condition'''
+                 | NOT value'''
 
 def p_comparator(p):
     '''comparator : GREATER
@@ -339,7 +337,7 @@ def p_arrow_function(p):
 ### Estructura de control
 def p_control_structures_while(p):
     """
-    control_structures_while : WHILE LPAREN conditions LBRACKET statement_list RBRACKET
+    control_structures_while : WHILE LPAREN conditions RPAREN LBRACKET statement_list RBRACKET
     """
 
 
@@ -406,27 +404,49 @@ parser = yacc.yacc()
 # Función para ejecutar las pruebas
 def test_parser(input_code):
     result = parser.parse(input_code)
-    message = f"Parsing input : {input_code} \n Parsing result : {result}"
+    message = f"Parsing result : {result}"
     resultados_sintactico.append(message)
     print(message)
 
 # Pruebas
-test_parser('int x = 10;')
-test_parser('x;')
-test_parser('y;')
-test_parser('void myFunction(int a, int b) {;}')
-test_parser('myFunction(10, 20);')
-test_parser('myFunction(10);')
-test_parser('otherFunction(10);')
-test_parser('String? input = stdin.readLineSync();')
-test_parser('int x = 10;')
-test_parser('x;')
-test_parser('y;')
-test_parser('void myFunction(int a, int b) {;}')
-test_parser('myFunction(10, 20);')
-test_parser('myFunction(10);')
-test_parser('otherFunction(10);')
+
+
+test_parser('''
+    int binarySearch(int target) {
+  // Lista ordenada definida dentro del método.
+  List<int> sortedList = [1, 3, 5, 7, 9, 11, 13, 15, 17];
+
+  int left = 0;
+  int right = sortedList.length;
+
+  while (left <= right) {
+    int middle = left + right - left; 
+    middle = middle ~/ 2;
+
+    if (middle == target) {
+      return middle; // Se encontró el elemento.
+    } else if (middle < target) {
+      left = middle + 1; // Buscar en el lado derecho.
+    } else {
+      right = middle - 1; // Buscar en el lado izquierdo.
+    }
+  }
+
+  return -1; // El elemento no está presente en la lista.
+}
+
+void main() {
+  int target = 7;
+
+  int result = binarySearch(target);
+
+  if (result != -1) {
+    print('El número $target se encuentra en el índice $result.');
+  } else {
+    print('El número $target no está en la lista.');
+  }
+}            
+''')
 
 
 #Pruebas Tomas Bolaños
-test_parser("for (int i = 0; i < value; i++) { for (final candidate in candidates) { for (final Candidate(:atributo, :atributo) in candidates) { print('Hola mundo');}}}")
