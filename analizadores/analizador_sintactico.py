@@ -86,10 +86,23 @@ def  p_data_input(p):
     '''data_input : STRING ID ASSIGN STDIN DOT READLINESYNC LPAREN RPAREN SEMICOLON
                | STRING QUESTION ID ASSIGN STDIN DOT READLINESYNC LPAREN RPAREN SEMICOLON'''
 
-def  p_length(p):
-    '''length : call_list DOT LENGTH
-              | TEXT DOT LENGTH
-              | ID DOT LENGTH'''
+def p_length(p):
+    '''
+    length : call_list DOT LENGTH
+           | TEXT DOT LENGTH
+           | ID DOT LENGTH
+    '''
+    if p.slice[1].type == "ID":  
+        if p[1] in variables:  
+            if isinstance(variables[p[1]], list): 
+                pass
+            else:
+                errormssg = f"Semantic error: variable {p[1]} is not a list"
+                resultados_semantico.append(errormssg)
+        else:
+            errormssg = f"Semantic error: list {p[1]} not initialized"
+            resultados_semantico.append(errormssg)
+
 
 def p_argument_list(p):
     '''
@@ -214,6 +227,8 @@ def p_list_definition(p):
     '''
     list_definition : LIST LESS type GREATER ID ASSIGN LSBRACKET value_list RSBRACKET SEMICOLON
     '''
+    variables[p[5]] = list(p[7])
+    p[0] = list(p[7])
 
 def p_value_list(p):
     '''value_list : value
